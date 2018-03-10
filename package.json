@@ -1,0 +1,19 @@
+{
+  "name": "notulen-importer-service",
+  "version": "0.3.0",
+  "description": "mu-semtech import microservice for legal documents",
+  "main": "app.js",
+  "dependencies": {
+    "graph-rdfa-processor": "^1.3.0",
+    "jsdom": "^11.6.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lblod/notulen-importer-service.git"
+  },
+  "author": "redpencil.io"
+}
