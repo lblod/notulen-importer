@@ -15,5 +15,6 @@
     "type": "git",
     "url": "git+https://github.com/lblod/notulen-importer-service.git"
   },
-  "author": "redpencil.io"
+  "author": "redpencil.io",
+  "license": "MIT"
 }
