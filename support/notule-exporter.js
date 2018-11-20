@@ -33,7 +33,7 @@ async function importCoreNotuleFromDoc( node, dom, doc ){
     PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
     PREFIX prov: <http://www.w3.org/ns/prov#>
     INSERT {
-      GRAPH <http://mu.semte.ch/application> {
+      GRAPH <http://mu.semte.ch/graphs/public> {
         ?s ?p ?o.
       }
     } WHERE {
@@ -145,7 +145,7 @@ async function importDecisionsFromDoc( node, dom ){
       ] } );
     await update(`
       INSERT DATA {
-        GRAPH <http://mu.semte.ch/application> {
+        GRAPH <http://mu.semte.ch/graphs/public> {
           ${sparqlEscapeUri( bvapUri )} 
             <http://purl.org/pav/derivedFrom>
               ""${sparqlEscapeString( outerHtml )}""
@@ -217,7 +217,7 @@ async function importFullNotuleFromDoc( node, dom, doc ){
     PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
     PREFIX prov: <http://www.w3.org/ns/prov#>
     INSERT {
-      GRAPH <http://mu.semte.ch/application> {
+      GRAPH <http://mu.semte.ch/graphs/public> {
         ?s ?p ?o.
       }
     } WHERE {
@@ -235,7 +235,7 @@ async function importFullNotuleFromDoc( node, dom, doc ){
   `);
   await update(`
     INSERT DATA {
-      GRAPH <http://mu.semte.ch/application> {
+      GRAPH <http://mu.semte.ch/graphs/public> {
         ${sparqlEscapeUri( sessionUri )}
           <http://purl.org/pav/derivedFrom>
             ""${sparqlEscapeString( outerHtml )}"".

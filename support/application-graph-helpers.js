@@ -22,7 +22,7 @@ async function saveNodeInTriplestore( node, resource ) {
 
   // We've put two quotes around escapedHtml to make the escapedHtml happy.  We can probably do better in the template.
   await update( `PREFIX pav: <http://purl.org/pav/>
-INSERT DATA { GRAPH <http://mu.semte.ch/application> { <${resource}> pav:derivedFrom ""${escapedHtml}"". } }` );
+INSERT DATA { GRAPH <http://mu.semte.ch/graphs/public> { <${resource}> pav:derivedFrom ""${escapedHtml}"". } }` );
 }
 
 /**
@@ -54,7 +54,7 @@ async function ensureGlobalUuidsForTypes( graphName, types ){
     response.results.bindings.map( async function({subject}){
       await update(
         `INSERT {
-           GRAPH <http://mu.semte.ch/application> {
+           GRAPH <http://mu.semte.ch/graphs/public> {
              ?s <http://mu.semte.ch/vocabularies/core/uuid> ${sparqlEscapeString( uuid() )}.
            }
          } WHERE {
@@ -95,7 +95,7 @@ async function insertUnionOfQueries( { prefix, sourceGraph, queries, splitCalls 
       await update(
         `${prefix}
          INSERT {
-           GRAPH <http://mu.semte.ch/application> {
+           GRAPH <http://mu.semte.ch/graphs/public> {
              ?s ?p ?o.
            }
          } WHERE {
@@ -109,7 +109,7 @@ async function insertUnionOfQueries( { prefix, sourceGraph, queries, splitCalls 
     await update(
       `${prefix}
        INSERT {
-         GRAPH <http://mu.semte.ch/application> {
+         GRAPH <http://mu.semte.ch/graphs/public> {
            ?s ?p ?o.
          }
        } WHERE {

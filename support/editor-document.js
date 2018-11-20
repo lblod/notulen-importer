@@ -68,12 +68,13 @@ async function editorDocumentFromUuid( uuid ){
   // We have removed dc:title from here
   const queryResult = await query(
     `PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
+     PREFIX mu: <http://mu.semte.ch/vocabularies/core/>
      SELECT * WHERE {
-     GRAPH <http://mu.semte.ch/application> {
-       ?uri a <http://mu.semte.ch/vocabularies/ext/EditorDocument>;
+     GRAPH ?graph {
+       ?uri a ext:EditorDocument;
             ext:editorDocumentContent ?content;
             ext:editorDocumentContext ?context;
-            <http://mu.semte.ch/vocabularies/core/uuid> ${sparqlEscapeString( uuid )}
+            mu:uuid ${sparqlEscapeString( uuid )}
        }
      }`);
   
