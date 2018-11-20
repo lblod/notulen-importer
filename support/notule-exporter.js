@@ -1,4 +1,5 @@
-import { update, query, sparqlEscapeString, sparqlEscapeUri, uuid } from 'mu';
+import { querySudo as query, updateSudo as update } from './auth-sudo';
+import { sparqlEscapeString, sparqlEscapeUri, uuid } from 'mu';
 
 import { ensureGlobalUuidsForTypes, insertUnionOfQueries } from './application-graph-helpers';
 import { saveGraphInTriplestore, cleanTempGraph } from './temporary-graph-helpers';

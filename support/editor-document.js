@@ -1,8 +1,8 @@
 /**
  * Represents an rdfa-document as entered by the user in the frontend.
  */
-
-import { query, sparqlEscapeString } from 'mu';
+import { querySudo as query } from './auth-sudo';
+import { sparqlEscapeString } from 'mu';
 import jsdom from 'jsdom';
 
 class EditorDocument {

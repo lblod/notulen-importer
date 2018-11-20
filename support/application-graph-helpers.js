@@ -2,11 +2,8 @@
  * Helpers which operate on the application graph.
  */
 
-import { update, query,
-         uuid,
-         sparqlEscapeString, sparqlEscapeUri
-       } from 'mu';
-
+import { querySudo as query, updateSudo as update } from './auth-sudo';
+import { sparqlEscapeUri, sparqlEscapeString, uuid } from 'mu';
 
 /**
  * Saves the node to the triplestore as the source of the supplied resource.

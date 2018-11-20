@@ -2,9 +2,8 @@
  * Importer for agenda from Meeting Minutes
  */
 
-import { query, update,
-         sparqlEscapeUri,
-         uuid } from 'mu';
+import { querySudo as query, updateSudo as update } from './auth-sudo';
+import { sparqlEscapeUri, uuid } from 'mu';
 
 import { findFirstNodeOfType } from './dom-helpers';
 import { graphForDomNode, removeBlankNodes } from './rdfa-helpers';

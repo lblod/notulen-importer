@@ -3,7 +3,7 @@
  * graph.
  */
 
-import { update } from 'mu';
+import { updateSudo as update } from './auth-sudo';
 
 /**
  * Saves the supplied RDFa graph in the triplestore.
