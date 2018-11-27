@@ -4,10 +4,10 @@
   "description": "mu-semtech import microservice for legal documents",
   "main": "app.js",
   "dependencies": {
-    "jsdom": "^11.6.2"
+    "jsdom": "^11.6.2",
+    "graph-rdfa-processor": "https://github.com/erikap/graph-rdfa-processor.git"
   },
   "devDependencies": {
-    "graph-rdfa-processor": "https://github.com/erikap/graph-rdfa-processor.git"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
