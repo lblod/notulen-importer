@@ -3,7 +3,7 @@
  */
 
 import { querySudo as query, updateSudo as update } from './auth-sudo';
-import { sparqlEscapeUri, uuid } from 'mu';
+import { sparqlEscapeUri, uuid, sparqlEscapeInt } from 'mu';
 
 import { findFirstNodeOfType } from './dom-helpers';
 import { graphForDomNode, removeBlankNodes } from './rdfa-helpers';
@@ -14,7 +14,7 @@ import { ensureGlobalUuidsForTypes, insertUnionOfQueries } from './application-g
  * Imports the agenda stored in Doc into the triplestore
  *
  * @method importAgendaFromDoc
- * 
+ *
  * @param {EditorDocument} doc EditorDocument in which the agenda is
  * contained.
  *
@@ -30,6 +30,7 @@ async function importAgendaFromDoc( doc ) {
   await saveGraphInTriplestore( graph, graphName );
 
   if( await tempGraphHasAgenda( graphName ) ) {
+    await addOrderForAgenda( graphName );
     await importAgendaTriplesFromDoc( graphName, doc, node );
     await ensureGlobalUuidsForAgendaImport( graphName );
     await cleanTempGraph( graphName );
@@ -38,6 +39,46 @@ async function importAgendaFromDoc( doc ) {
     throw "Document did not contain Agenda";
   }
 }
+
+
+async function addOrderForAgenda( graphName ) {
+  const punten = await query(`
+      SELECT ?s ?previous WHERE {
+         GRAPH ${sparqlEscapeUri(graphName)} {
+           ?s a <http://data.vlaanderen.be/ns/besluit#Agendapunt>.
+           OPTIONAL { ?s <http://data.vlaanderen.be/ns/besluit#aangebrachtNa> ?previous }
+         }
+     }
+  `);
+  const orderedPunten = [];
+  const puntenMap = {};
+  var laatstePunt;
+  for (const punt of punten.results.bindings) {
+    const uri = punt["s"].value;
+    const before = punt["previous"] ? punt["previous"].value : null;
+    if (! before) {
+      laatstePunt = uri;
+    }
+    else {
+      puntenMap[before]=uri;
+    }
+  }
+  while (laatstePunt) {
+    orderedPunten.push(laatstePunt);
+    if (laatstePunt === puntenMap[orderedPunten[orderedPunten.length-1]])
+      laatstePunt = null;
+    else
+      laatstePunt = puntenMap[orderedPunten[orderedPunten.length-1]];
+  }
+
+  await update(`
+       INSERT DATA {
+          GRAPH ${sparqlEscapeUri(graphName)} {
+            ${orderedPunten.map( (s, order) => `${sparqlEscapeUri(s)} <http://schema.org/position> ${sparqlEscapeInt(order)}.`).join("\n")}
+          }
+       }
+    `);
+};
 
 /**
  * Returns a truethy value from its promise iff the temporary graph
@@ -52,15 +93,13 @@ async function importAgendaFromDoc( doc ) {
  * graph contained an agenda.
  */
 async function tempGraphHasAgenda( graphName ) {
-  const queryResponse = await query(`SELECT ?uri
-    WHERE {
+  return await query(`ASK
+    {
       GRAPH ${sparqlEscapeUri( graphName )} {
         ?uri a <http://data.vlaanderen.be/ns/besluit#Agenda>.
       }
-    } LIMIT 1
+   }
   `);
-
-  return queryResponse.results.bindings.length > 0;
 }
 
 /**
@@ -131,6 +170,7 @@ async function importAgendaTriplesFromDoc( tempGraph, doc, domNode ) {
           <http://data.vlaanderen.be/ns/besluit#heeftAgenda>
           <http://data.vlaanderen.be/ns/besluit#geplandeStart>
           <http://data.vlaanderen.be/ns/besluit#isGehoudenDoor>
+          <http://data.vlaanderen.be/ns/besluit#aangebrachtNa>
         }`
       ,
       ` ?ss a <http://data.vlaanderen.be/ns/besluit#Zitting>;
@@ -150,6 +190,7 @@ async function importAgendaTriplesFromDoc( tempGraph, doc, domNode ) {
           <http://purl.org/dc/terms/description>
           <http://data.vlaanderen.be/ns/besluit#geplandOpenbaar>
           <http://data.vlaanderen.be/ns/besluit#Agendapunt.type>
+          <http://schema.org/position>
         }`
       // , // We skip this query for now, as we will only publish these
       //   // Meeting Minutes after the meeting was held
