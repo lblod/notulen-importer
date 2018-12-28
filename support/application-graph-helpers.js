@@ -55,12 +55,13 @@ async function ensureGlobalUuidsForTypes( graphName, types ){
       await update(
         `INSERT {
            GRAPH <http://mu.semte.ch/graphs/public> {
-             ?s <http://mu.semte.ch/vocabularies/core/uuid> ${sparqlEscapeString( uuid() )}.
+             ?s <http://mu.semte.ch/vocabularies/core/uuid> ?uuid.
            }
          } WHERE {
-           FILTER NOT EXISTS {
-            ?s <http://mu.semte.ch/vocabularies/core/uuid> ?uuid
+           OPTIONAL {
+            ?s <http://mu.semte.ch/vocabularies/core/uuid> ?existingUuid
            }
+           BIND(IF(BOUND(?existingUuid), ?existingUuid, ${sparqlEscapeString( uuid() )}) as ?uuid )
            VALUES ?s { ${sparqlEscapeUri(subject.value)} }
          }`);
     }) );
