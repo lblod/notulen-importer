@@ -17,6 +17,7 @@ app.post('/publish/agenda/:documentIdentifier', async function(req, res) {
     res.send( { success: true } );
 
   } catch (err) {
+    console.log(err);
     res
       .status(400)
       .send( { message: `An error occurred while publishing agenda ${req.params.documentIdentifier}`,
