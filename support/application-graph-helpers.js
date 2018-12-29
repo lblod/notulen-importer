@@ -55,13 +55,24 @@ async function ensureGlobalUuidsForTypes( graphName, types ){
       await update(
         `INSERT {
            GRAPH <http://mu.semte.ch/graphs/public> {
+             ?s <http://mu.semte.ch/vocabularies/core/uuid> ?existingUuid .
+           }
+         } WHERE {
+             ?s <http://mu.semte.ch/vocabularies/core/uuid> ?existingUuid .
+           VALUES ?s { ${sparqlEscapeUri(subject.value)} }
+         }
+
+         ;
+
+         INSERT {
+           GRAPH <http://mu.semte.ch/graphs/public> {
              ?s <http://mu.semte.ch/vocabularies/core/uuid> ?uuid.
            }
          } WHERE {
-           OPTIONAL {
-            ?s <http://mu.semte.ch/vocabularies/core/uuid> ?existingUuid
+           FILTER NOT EXISTS {
+             ?s <http://mu.semte.ch/vocabularies/core/uuid> ?existingUuid
            }
-           BIND(IF(BOUND(?existingUuid), ?existingUuid, ${sparqlEscapeString( uuid() )}) as ?uuid )
+           BIND(${sparqlEscapeString( uuid() )} as ?uuid)
            VALUES ?s { ${sparqlEscapeUri(subject.value)} }
          }`);
     }) );
@@ -74,7 +85,7 @@ async function ensureGlobalUuidsForTypes( graphName, types ){
  * to use ?s ?p ?o to construct their contents.
  *
  * @method insertUnionOfQueries
- * 
+ *
  * @param {string} prefix Prefixes to be inserted before the queries
  * @param {string} sourceGraph URI of the graph from which content
  * should be selected
