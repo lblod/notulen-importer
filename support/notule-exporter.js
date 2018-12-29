@@ -94,13 +94,15 @@ async function importDecisionsFromDoc( node, dom ){
       sourceGraph: tmpGraphName,
       splitCalls: false, // set to true to get different calls
       queries: [
-        // importeer het type, het gevolg van de behandeling (TODO: is dit correct?) en de link naar het besluit.
+        // Eigenschappen van de Behandeling van Agendapunt
         ` ?s a besluit:BehandelingVanAgendapunt.
           ?s ?p ?o
           VALUES ?p {
             rdf:type
             besluit:gevolg
             prov:generated
+            dct:subject
+            besluit:gebeurtNa
           }`
         ,
         // Eigenschappen van het besluit zelf
