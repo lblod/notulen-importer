@@ -170,7 +170,6 @@ async function importAgendaTriplesFromDoc( tempGraph, doc, domNode ) {
           <http://data.vlaanderen.be/ns/besluit#heeftAgenda>
           <http://data.vlaanderen.be/ns/besluit#geplandeStart>
           <http://data.vlaanderen.be/ns/besluit#isGehoudenDoor>
-          <http://data.vlaanderen.be/ns/besluit#aangebrachtNa>
         }`
       ,
       ` ?ss a <http://data.vlaanderen.be/ns/besluit#Zitting>;
@@ -190,6 +189,7 @@ async function importAgendaTriplesFromDoc( tempGraph, doc, domNode ) {
           <http://purl.org/dc/terms/description>
           <http://data.vlaanderen.be/ns/besluit#geplandOpenbaar>
           <http://data.vlaanderen.be/ns/besluit#Agendapunt.type>
+          <http://data.vlaanderen.be/ns/besluit#aangebrachtNa>
           <http://schema.org/position>
         }`
       // , // We skip this query for now, as we will only publish these
