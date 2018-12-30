@@ -28,6 +28,7 @@ async function importCoreNotuleFromDoc( node, dom, doc ){
   // Store session in temporary graph (in Virtuoso)
   await saveGraphInTriplestore( tmpGraph, tmpGraphName );
 
+  // Is this still required? Zitting is already published on agenda publication
   await update(`
     PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
     PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
@@ -44,7 +45,6 @@ async function importCoreNotuleFromDoc( node, dom, doc ){
           rdf:type 
           besluit:isGehoudenDoor
           besluit:geplandeStart
-          ext:behandelt
         }
       }
     }
