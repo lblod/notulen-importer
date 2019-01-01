@@ -90,6 +90,7 @@ async function importDecisionsFromDoc( node, dom ){
       prefix: `PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
                PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
                PREFIX prov: <http://www.w3.org/ns/prov#>
+               PREFIX dct: <http://purl.org/dc/terms/>
                PREFIX eli: <http://data.europa.eu/eli/ontology#>`,
       sourceGraph: tmpGraphName,
       splitCalls: false, // set to true to get different calls
