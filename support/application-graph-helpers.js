@@ -39,43 +39,31 @@ INSERT DATA { GRAPH <http://mu.semte.ch/graphs/public> { <${resource}> pav:deriv
  * @return {Promise} promise which resolves when the operation has
  * finished.
  */
-async function ensureGlobalUuidsForTypes( graphName, types ){
-  const response = await query(
-    `SELECT ?subject WHERE {
-       GRAPH ${sparqlEscapeUri( graphName )} {
+async function ensureGlobalUuidsForTypes( source, types, target='http://mu.semte.ch/graphs/public' ){
+  const response = await query(`
+       PREFIX mu:      <http://mu.semte.ch/vocabularies/core/>
+       SELECT ?subject ?id WHERE {
+       GRAPH ${sparqlEscapeUri(source)} {
          ?subject a ?type
          VALUES ?type {
            ${ types.map( sparqlEscapeUri ).join( " " ) }
          }
        }
+       OPTIONAL { ?subject mu:uuid ?id.}
      }`);
-
-  await Promise.all(
-    response.results.bindings.map( async function({subject}){
-      await update(
-        `INSERT {
-           GRAPH <http://mu.semte.ch/graphs/public> {
-             ?s <http://mu.semte.ch/vocabularies/core/uuid> ?existingUuid .
-           }
-         } WHERE {
-             ?s <http://mu.semte.ch/vocabularies/core/uuid> ?existingUuid .
-           VALUES ?s { ${sparqlEscapeUri(subject.value)} }
-         }
-
-         ;
-
-         INSERT {
-           GRAPH <http://mu.semte.ch/graphs/public> {
-             ?s <http://mu.semte.ch/vocabularies/core/uuid> ?uuid.
-           }
-         } WHERE {
-           FILTER NOT EXISTS {
-             ?s <http://mu.semte.ch/vocabularies/core/uuid> ?existingUuid
-           }
-           BIND(${sparqlEscapeString( uuid() )} as ?uuid)
-           VALUES ?s { ${sparqlEscapeUri(subject.value)} }
-         }`);
-    }) );
+  const map = new Map(response.results.bindings.map( ({subject, id}) => {
+    return [subject.value, id ? id.value : uuid()];
+  } ));
+  for (var [subject, id] of map) {
+    await update(`
+      PREFIX mu:      <http://mu.semte.ch/vocabularies/core/>
+      INSERT DATA {
+        GRAPH ${sparqlEscapeUri(target)} {
+           ${sparqlEscapeUri(subject)} mu:uuid ${sparqlEscapeString(id)}.
+        }
+      }
+    `);
+  }
 }
 
 /**
