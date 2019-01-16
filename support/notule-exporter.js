@@ -21,7 +21,7 @@ async function importCoreNotuleFromDoc( node, dom, doc ){
   const tmpGraphName = `http://notule-importer.mu/${uuid()}`;
   const tmpGraph = graphForDomNode( sessionNode, dom, "https://besluit.edu" );
   removeBlankNodes( tmpGraph );
-  
+
   // Find outerHTML of session
   const outerHtml = sessionNode.outerHTML;
 
@@ -42,7 +42,7 @@ async function importCoreNotuleFromDoc( node, dom, doc ){
         ?s a besluit:Zitting.
         ?s ?p ?o
         VALUES ?p {
-          rdf:type 
+          rdf:type
           besluit:isGehoudenDoor
           besluit:geplandeStart
         }
@@ -67,7 +67,7 @@ async function importCoreNotuleFromDoc( node, dom, doc ){
 async function importDecisionsFromDoc( node, dom ){
   // Store session in temporary graph
   const sessionNodes = findAllNodesOfType( node, "http://data.vlaanderen.be/ns/besluit#BehandelingVanAgendapunt" );
-  await Promise.all( sessionNodes.map( async function(besluitNode){
+  for (const besluitNode of sessionNodes) {
     const tmpGraphName = `http://notule-importer.mu/${uuid()}`;
     const tmpGraph = graphForDomNode( besluitNode, dom, "https://besluit.edu" );
     removeBlankNodes( tmpGraph );
@@ -85,7 +85,6 @@ async function importDecisionsFromDoc( node, dom ){
       }
     `);
     const bvapUri = queryResult.results.bindings[0].uri.value;
-    
     await insertUnionOfQueries( {
       prefix: `PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
                PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
@@ -149,7 +148,7 @@ async function importDecisionsFromDoc( node, dom ){
     await update(`
       INSERT DATA {
         GRAPH <http://mu.semte.ch/graphs/public> {
-          ${sparqlEscapeUri( bvapUri )} 
+          ${sparqlEscapeUri( bvapUri )}
             <http://purl.org/pav/derivedFrom>
               ""${sparqlEscapeString( outerHtml )}""
         }
@@ -163,7 +162,7 @@ async function importDecisionsFromDoc( node, dom ){
       "http://data.vlaanderen.be/ns/mandaat#AanstellingsBesluit"
     ] );
     await cleanTempGraph( tmpGraphName );
-  }));
+  };
 
   // Extract Notule into Graph
   // find all Agenda Point Treatments
@@ -197,7 +196,7 @@ async function importFullNotuleFromDoc( node, dom, doc ){
   const tmpGraphName = `http://notule-importer.mu/${uuid()}`;
   const tmpGraph = graphForDomNode( sessionNode, dom, "https://besluit.edu" );
   removeBlankNodes( tmpGraph );
-  
+
   // Find outerHTML of session
   const outerHtml = sessionNode.outerHTML;
 
@@ -214,7 +213,7 @@ async function importFullNotuleFromDoc( node, dom, doc ){
     }
   `);
   const sessionUri = queryResult.results.bindings[0].uri.value;
-  
+
   await update(`
     PREFIX ext: <http://mu.semte.ch/vocabularies/ext/>
     PREFIX besluit: <http://data.vlaanderen.be/ns/besluit#>
@@ -228,7 +227,7 @@ async function importFullNotuleFromDoc( node, dom, doc ){
         ?s a besluit:Zitting.
         ?s ?p ?o
         VALUES ?p {
-          rdf:type 
+          rdf:type
           prov:atLocation
           prov:startedAtTime
           prov:endedAtTime
