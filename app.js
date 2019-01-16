@@ -1,10 +1,6 @@
 import { app, uuid } from 'mu';
-
 import { editorDocumentFromUuid } from './support/editor-document';
-
 import { importAgendaFromDoc } from './support/agenda-exporter';
-        
-
 import { importCoreNotuleFromDoc,
          importDecisionsFromDoc,
          importFullNotuleFromDoc
@@ -30,11 +26,11 @@ app.post('/publish/decision/:documentIdentifier', async function(req, res) {
     const documentId = req.params.documentIdentifier;
     const doc = await editorDocumentFromUuid( documentId );
     await importCoreNotuleFromDoc( doc.getTopDomNode(), doc.getDom(), doc );
-
     doc.resetDom();
     await importDecisionsFromDoc( doc.getTopDomNode(), doc.getDom() );
     res.send( { success: true } );
   } catch (err) {
+    console.log(err);
     res
       .status(400)
       .send( { message: `An error occurred while publishing decisions for ${req.params.documentIdentifier}`,
@@ -49,6 +45,7 @@ app.post('/publish/notule/:documentIdentifier', async function(req, res) {
     await importFullNotuleFromDoc( doc.getTopDomNode(), doc.getDom(), doc );
     res.send( { success: true } );
   } catch (err) {
+    console.log(err);
     res
       .status(400)
       .send( { message: `An error occurred while publishing minutes for ${req.params.documentIdentifier}`,
