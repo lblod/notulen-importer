@@ -1,6 +1,6 @@
 {
   "name": "notulen-importer-service",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "mu-semtech import microservice for legal documents",
   "main": "app.js",
   "dependencies": {
